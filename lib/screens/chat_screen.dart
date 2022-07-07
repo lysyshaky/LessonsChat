@@ -73,21 +73,27 @@ class _ChatScreenState extends State<ChatScreen> {
             // Stream Data from Firebase
             StreamBuilder<QuerySnapshot>(
               stream: _firestore.snapshots(),
+              // ignore: missing_return
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   final messages = snapshot.data.docs;
-                  List<Text> messageWidgets = [];
+                  List<MessageBubble> messageBubbles = [];
                   for (var message in messages) {
                     Map<String, dynamic> messageData = message.data();
-                    final messageText = messageData["text"];
-                    final messageSender = messageData["sender"];
-                    final messageWidget =
-                        Text('$messageText from $messageSender');
-                    messageWidgets.add(messageWidget);
+                    final messageText = messageData['text'];
+                    final messageSender = messageData['sender'];
+                    final messageBubble = MessageBubble(
+                      sender: messageSender,
+                      text: messageText,
+                    );
+                    messageBubbles.add(messageBubble);
                   }
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: messageWidgets,
+                  return Expanded(
+                    child: ListView(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 20.0, horizontal: 10),
+                      children: messageBubbles,
+                    ),
                   );
                 }
               },
@@ -123,6 +129,25 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class MessageBubble extends StatelessWidget {
+  MessageBubble({this.sender, this.text});
+
+  final String sender;
+  final String text;
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.lightBlueAccent,
+      child: Text(
+        '$text from $sender',
+        style: TextStyle(
+          fontSize: 20.0,
         ),
       ),
     );
