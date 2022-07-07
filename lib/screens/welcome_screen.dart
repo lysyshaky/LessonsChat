@@ -32,8 +32,6 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     controller.addListener(() {
       setState(() {});
       count = (controller.value * 100).round();
-
-      print(animation.value);
     });
   }
 
